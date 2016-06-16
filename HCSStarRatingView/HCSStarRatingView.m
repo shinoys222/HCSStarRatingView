@@ -107,14 +107,25 @@
     return MIN(MAX(_value, _minimumValue), _maximumValue);
 }
 
-- (void)setValue:(CGFloat)value {
-    [self setValue:value sendValueChangedAction:NO];
+- (void)setValue:(CGFloat)value
+{
+    if(_allowsHalfStars == YES && _accurateHalfStars == NO)
+    {
+        CGFloat newValue = floor((value + 0.25) / 0.5) * 0.5;
+        [self setValue:newValue sendValueChangedAction:NO];
+    }
+    else
+    {
+        [self setValue:value sendValueChangedAction:NO];
+    }
 }
 
 - (void)setValue:(CGFloat)value sendValueChangedAction:(BOOL)sendAction {
     [self willChangeValueForKey:NSStringFromSelector(@selector(value))];
-    if (_value != value && value >= _minimumValue && value <= _maximumValue) {
+    if (_value != value && value >= _minimumValue && value <= _maximumValue)
+    {
         _value = value;
+        
         if (sendAction) [self sendActionsForControlEvents:UIControlEventValueChanged];
         [self setNeedsDisplay];
     }
